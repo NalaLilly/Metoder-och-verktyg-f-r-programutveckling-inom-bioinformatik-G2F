@@ -9,7 +9,10 @@ gene_table <- function(count_file, sample_file ){
   sample_table$sex <- factor(sample_table$sex)
   sample_table$diseas <- factor(sample_table$diseas)
 
-  a <- colnames(count_table) == rownames(sample_table)
+  table_maching <- colnames(count_table) == rownames(sample_table)
+
+  if (table_maching == FALSE)
+    {stop("Count_table and sample table are not matching !")}
 
   return(list(head(count_table), sample_table, a))}
 
