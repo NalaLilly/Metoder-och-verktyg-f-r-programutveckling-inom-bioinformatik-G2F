@@ -15,7 +15,7 @@ gene_table <- function(count_file, sample_file ){
   sample_table$sex <- factor(sample_table$sex)
   sample_table$diseas <- factor(sample_table$diseas)
   a <- colnames(count_table) == rownames(sample_table)
-  gene_data <- list(count_table,sample_table))
+  gene_data <- list(count_table,sample_table)
   return(gene_data)}
 
 
@@ -37,4 +37,5 @@ low_gene_filtering <- function(cutoff) {
   return(list(count_table_filt, sample_table))}
 
 low_gene_filtering(1)
+
 
