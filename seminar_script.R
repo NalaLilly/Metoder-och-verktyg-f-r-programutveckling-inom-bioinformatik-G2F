@@ -1,4 +1,10 @@
 library(devtools)
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("edgeR")
+
 use_package("edgeR")
 
 gene_table <- function(count_file, sample_file ){
@@ -8,22 +14,26 @@ gene_table <- function(count_file, sample_file ){
   sample_table$individual <- factor(sample_table$individual)
   sample_table$sex <- factor(sample_table$sex)
   sample_table$diseas <- factor(sample_table$diseas)
+  a <- colnames(count_table) == rownames(sample_table)
+  gene_data <- list(count_table,sample_table)
+  return(gene_data)}
 
-  table_maching <- colnames(count_table) == rownames(sample_table)
 
-  if (table_maching == FALSE)
-    {stop("Count_table and sample table are not matching !")}
-
-  return(list(head(count_table), sample_table, a))}
-
-gene_table("E-MTAB-2523.counts.txt", "E-MTAB-2523_sample table.txt")
 
 low_gene_filtering <- function(cutoff) {
-filt <- rowMeans(log2(cpm(count_table)+1))
-sum(filt <= 1)
-count_table_filt <- count_table[filt > cutoff,]
-dim(count_table)
-dim(count_table_filt)
-}
+  gene_data <- gene_table("E-MTAB-2523.counts.txt", "E-MTAB-2523_sample table.txt")
+  count_table <- gene_data[[1]]
+  sample_table <- gene_data[[2]]
+  filt <- rowMeans(log2(edgeR::cpm(count_table)+1))
+  sum(filt <= 1)
+  count_table_filt <- count_table[filt > cutoff,]
+
+  msg <- paste("filtering works! data befoe filtering ",
+               paste(dim(count_table), collapse = "x"),
+               "after filtering",
+               paste(dim(count_table_filt), collapse = "x"))
+
+  message(msg)
+  return(list(count_table_filt, sample_table))}
 
 low_gene_filtering(1)
