@@ -14,7 +14,7 @@ count_table <- read.table("E-MTAB-2523.counts.txt", header = TRUE, as.is = TRUE,
 sample_table <- read.table("E-MTAB-2523_sample table.txt", header = TRUE, as.is = TRUE, row.names = 1, sep = "\t")
 
 GO_pathway <- function(organism = org.Hs.eg.db, gene_type = "SYMBOL"){
-  statical_analysis<- run_dge_edger(count_table, sample_table,
+  statical_analysis <- run_dge_edger(count_table, sample_table,
                      group_col     = "disease",
                      case_label    = "carcinoma",
                      control_label = "normal",
@@ -30,28 +30,35 @@ GO_pathway <- function(organism = org.Hs.eg.db, gene_type = "SYMBOL"){
                             keyType = gene_type,
                             ont = "BP",
                             pvalueCutoff = 0.05)
-  head(GO@result[,c(2,3,5)])}
+  head(GO@result[,c(2,3,6)])}
 
 
-GO_pathway(organism = org.Hs.eg.db, gene_type = "SYMBOL")
 
 
-KEGG_pathway <- function(organism = org.Hs.eg.db){
-  a <- run_dge_edger(count_table, sample_table,
+
+KEGG_pathway <- function(organism = hsa, organism_data = org.Hs.eg.db, gene_type = "SYMBOL"){
+  statical_analysis <- run_dge_edger(count_table, sample_table,
                 group_col     = "disease",
                 case_label    = "carcinoma",
                 control_label = "normal",
                 fdr_cutoff    = 0.05,
                 lfc_cutoff    = 1)
 
-  signficant_genes <- a[[2]]
+  signficant_genes <- statical_analysis[[2]]
   genes_names <- rownames(signficant_genes)
-  genes_Entrez <- org.Hs.eg.db::mapIds(org.Hs.eg.db,
+  library("org.Hs.eg.db")
+  genes_Entrez <- AnnotationDbi::mapIds(organism_data,
                                             keys=genes_names,
                                             keytype="SYMBOL",
                                             column="ENTREZID")
-  genes_cl10_Entrez<-genes_cl10_Entrez[!duplicated(genes_cl10_Entrez) &
-                                         !duplicated(genes_cl10_Entrez,fromLast=TRUE)]
+
+  genes_Entrez<-genes_Entrez[!duplicated(genes_Entrez) &
+                                         !duplicated(genes_Entrez, fromLast=TRUE)]
   paste0("Number of genes in after removing elements with duplicated names and or NAs = ",
-         length(genes_cl10_Entrez))
-  }
+         length(genes_Entrez))
+  KEGG <- clusterProfiler::enrichKEGG(gene = genes_Entrez,
+                                      organism = organism,
+                                      keyType = "ncbi-geneid",
+                                      pvalueCutoff = 0.05)
+  head(KEGG@result[,c(2,3,6)])}
+KEGG_pathway(organism = "hsa", organism_data = org.Hs.eg.db, gene_type = "SYMBOL")
