@@ -10,8 +10,8 @@ use_package("AnnotationDbi")
 use_package("clusterProfiler")
 use_package("ggplot2")
 
-count_table <- read.table("E-MTAB-2523.counts.txt", header = TRUE, as.is = TRUE, row.names = 1, sep = "\t")
-sample_table <- read.table("E-MTAB-2523_sample table.txt", header = TRUE, as.is = TRUE, row.names = 1, sep = "\t")
+
+
 
 GO_pathway <- function(organism = org.Hs.eg.db, gene_type = "SYMBOL"){
   statical_analysis <- run_dge_edger(count_table, sample_table,
@@ -61,4 +61,4 @@ KEGG_pathway <- function(organism = hsa, organism_data = org.Hs.eg.db, gene_type
                                       keyType = "ncbi-geneid",
                                       pvalueCutoff = 0.05)
   head(KEGG@result[,c(2,3,6)])}
-KEGG_pathway(organism = "hsa", organism_data = org.Hs.eg.db, gene_type = "SYMBOL")
+
