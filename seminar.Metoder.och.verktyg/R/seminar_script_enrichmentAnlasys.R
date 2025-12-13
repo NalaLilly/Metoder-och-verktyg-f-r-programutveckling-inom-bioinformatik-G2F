@@ -1,10 +1,5 @@
 library(devtools)
 
-BiocManager::install("org.Hs.eg.db")
-BiocManager::install("AnnotationDbi")
-BiocManager::install("clusterProfiler")
-BiocManager::install("ggplot2")
-
 use_package("org.Hs.eg.db")
 use_package("AnnotationDbi")
 use_package("clusterProfiler")
@@ -23,15 +18,13 @@ GO_pathway <- function(organism = org.Hs.eg.db, gene_type = "SYMBOL"){
 
   significant_genes <- statical_analysis[[2]]
   genes_names <- rownames(significant_genes)
-  library(org.Hs.eg.db)
 
   GO <- clusterProfiler::enrichGO(gene = genes_names,
-                            OrgDb = organism,
+                            OrgDb = org.Hs.eg.db::org.Hs.eg.db,
                             keyType = gene_type,
                             ont = "BP",
                             pvalueCutoff = 0.05)
   head(GO@result[,c(2,3,6)])}
-
 
 
 
@@ -46,8 +39,7 @@ KEGG_pathway <- function(organism = hsa, organism_data = org.Hs.eg.db, gene_type
 
   signficant_genes <- statical_analysis[[2]]
   genes_names <- rownames(signficant_genes)
-  library("org.Hs.eg.db")
-  genes_Entrez <- AnnotationDbi::mapIds(organism_data,
+  genes_Entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
                                             keys=genes_names,
                                             keytype="SYMBOL",
                                             column="ENTREZID")
@@ -61,4 +53,3 @@ KEGG_pathway <- function(organism = hsa, organism_data = org.Hs.eg.db, gene_type
                                       keyType = "ncbi-geneid",
                                       pvalueCutoff = 0.05)
   head(KEGG@result[,c(2,3,6)])}
-KEGG_pathway(organism = "hsa", organism_data = org.Hs.eg.db, gene_type = "SYMBOL")
