@@ -68,7 +68,7 @@ KEGG_pathway <- function(gene_type = "SYMBOL"){
   paste0("Number of genes in after removing elements with duplicated names and or NAs = ",
          length(genes_Entrez))
   KEGG <- clusterProfiler::enrichKEGG(gene = genes_Entrez,
-                                      organism = organism,
+                                      organism = "hsa",
                                       keyType = "ncbi-geneid",
                                       pvalueCutoff = 0.05)
   head(KEGG@result[,c(2,3,6)])}
