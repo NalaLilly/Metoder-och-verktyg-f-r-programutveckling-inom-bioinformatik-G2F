@@ -6,18 +6,25 @@ use_package("clusterProfiler")
 use_package("ggplot2")
 
 
+
 #' Gene Ontology GO enrichment analysis
 #'
 #'
 #' @param gene_type tells the function what kind Gene ID it is, take gene symbol or ENTREZ ID
+#' @param count_file is the count file for RNA-seq experiment, assumes the file has header and is separated with tab
+#' @param sample_file is the sample file where you define which group each sample belongs to. assumes the file has header and is separated with tab
 #'
-#' @returns a table with over represented gene
+#' @returns Export the results of the Gene Ontology enrichment analysis analysis to a CVS file
 #' @export
 #'
 #' @examples GOpathway(gene_type = "SYMBOL")
 #' @examples GOpathway(gene_type = "ENTREZID")
 
 GO_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
+
+  gene_filterd <-low_gene_filtering(cutoff = 1, count_table, sample_table)
+  count_table <- gene_filterd[[1]]
+  sample_table <- gene_filterd[[2]]
 
   # basic argument check so the user knows what to pass
   if (missing(count_table) || missing(sample_table)) {
@@ -38,7 +45,9 @@ GO_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
                             keyType = gene_type,
                             ont = "BP",
                             pvalueCutoff = 0.05)
-  GO 
+
+  write.table(GO, file = "Result_GO_analysisi.csv", sep = "\t",row.names = FALSE)
+
 }
 
 
@@ -54,6 +63,10 @@ GO_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
 #' @examples KEGG_pathway(gene_type = "ENTREZID")
 
 KEGG_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
+
+  gene_filterd <-low_gene_filtering(cutoff = 1, count_table, sample_table)
+  count_table <- gene_filterd[[1]]
+  sample_table <- gene_filterd[[2]]
 
   # basic argument check so the user knows what to pass
   if (missing(count_table) || missing(sample_table)) {
@@ -81,5 +94,7 @@ KEGG_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
                                       organism = "hsa",
                                       keyType = "ncbi-geneid",
                                       pvalueCutoff = 0.05)
-  KEGG 
+
+  write.table(KEGG, file = "Result_KEGG_analysisi.csv", sep = "\t",row.names = FALSE)
+
 }
