@@ -18,14 +18,14 @@ use_package("ggplot2")
 #' @examples GOpathway(gene_type = "ENTREZID")
 
 GO_pathway <- function( gene_type = "SYMBOL"){
-  statical_analysis <- run_dge_edger(count_table, sample_table,
+  statistical_analysis <- run_dge_edger(count_table, sample_table,
                      group_col     = "disease",
                      case_label    = "carcinoma",
                      control_label = "normal",
                      fdr_cutoff    = 0.05,
                      lfc_cutoff    = 1)
 
-  significant_genes <- statical_analysis[[2]]
+  significant_genes <- statistical_analysis[[2]]
   genes_names <- rownames(significant_genes)
 
   GO <- clusterProfiler::enrichGO(gene = genes_names,
