@@ -17,7 +17,12 @@ use_package("ggplot2")
 #' @examples GOpathway(gene_type = "SYMBOL")
 #' @examples GOpathway(gene_type = "ENTREZID")
 
-GO_pathway <- function( gene_type = "SYMBOL"){
+GO_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
+
+  # basic argument check so the user knows what to pass
+  if (missing(count_table) || missing(sample_table)) {
+    stop("Please provide 'count_table' and 'sample_table' (e.g. from gene_table()).")
+  }
   statistical_analysis <- run_dge_edger(count_table, sample_table,
                      group_col     = "disease",
                      case_label    = "carcinoma",
@@ -48,7 +53,12 @@ GO_pathway <- function( gene_type = "SYMBOL"){
 #' @examples KEGG_pathway(gene_type = "SYMBOL")
 #' @examples KEGG_pathway(gene_type = "ENTREZID")
 
-KEGG_pathway <- function(gene_type = "SYMBOL"){
+KEGG_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
+
+  # basic argument check so the user knows what to pass
+  if (missing(count_table) || missing(sample_table)) {
+    stop("Please provide 'count_table' and 'sample_table' (e.g. from gene_table()).")
+  }
   statical_analysis <- run_dge_edger(count_table, sample_table,
                 group_col     = "disease",
                 case_label    = "carcinoma",
