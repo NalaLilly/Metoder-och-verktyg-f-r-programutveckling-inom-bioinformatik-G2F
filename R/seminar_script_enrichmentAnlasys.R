@@ -33,8 +33,8 @@ GO_pathway <- function( gene_type = "SYMBOL"){
                             keyType = gene_type,
                             ont = "BP",
                             pvalueCutoff = 0.05)
-  head(GO@result[,c(2,3,6)])}
-
+  GO 
+}
 
 
 
@@ -71,4 +71,5 @@ KEGG_pathway <- function(gene_type = "SYMBOL"){
                                       organism = "hsa",
                                       keyType = "ncbi-geneid",
                                       pvalueCutoff = 0.05)
-  head(KEGG@result[,c(2,3,6)])}
+  KEGG 
+}
