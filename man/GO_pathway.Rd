@@ -4,13 +4,17 @@
 \alias{GO_pathway}
 \title{Gene Ontology GO enrichment analysis}
 \usage{
-GO_pathway(gene_type = "SYMBOL")
+GO_pathway(count_table, sample_table, gene_type = "SYMBOL")
 }
 \arguments{
 \item{gene_type}{tells the function what kind Gene ID it is, take gene symbol or ENTREZ ID}
+
+\item{count_file}{is the count file for RNA-seq experiment, assumes the file has header and is separated with tab}
+
+\item{sample_file}{is the sample file where you define which group each sample belongs to. assumes the file has header and is separated with tab}
 }
 \value{
-a table with over represented gene
+Export the results of the Gene Ontology enrichment analysis analysis to a CVS file
 }
 \description{
 Gene Ontology GO enrichment analysis

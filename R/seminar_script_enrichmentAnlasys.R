@@ -6,26 +6,38 @@ use_package("clusterProfiler")
 use_package("ggplot2")
 
 
+
 #' Gene Ontology GO enrichment analysis
 #'
 #'
 #' @param gene_type tells the function what kind Gene ID it is, take gene symbol or ENTREZ ID
+#' @param count_file is the count file for RNA-seq experiment, assumes the file has header and is separated with tab
+#' @param sample_file is the sample file where you define which group each sample belongs to. assumes the file has header and is separated with tab
 #'
-#' @returns a table with over represented gene
+#' @returns Export the results of the Gene Ontology enrichment analysis analysis to a CVS file
 #' @export
 #'
 #' @examples GOpathway(gene_type = "SYMBOL")
 #' @examples GOpathway(gene_type = "ENTREZID")
 
-GO_pathway <- function( gene_type = "SYMBOL"){
-  statical_analysis <- run_dge_edger(count_table, sample_table,
+GO_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
+
+  gene_filterd <-low_gene_filtering(cutoff = 1, count_table, sample_table)
+  count_table <- gene_filterd[[1]]
+  sample_table <- gene_filterd[[2]]
+
+  # basic argument check so the user knows what to pass
+  if (missing(count_table) || missing(sample_table)) {
+    stop("Please provide 'count_table' and 'sample_table' (e.g. from gene_table()).")
+  }
+  statistical_analysis <- run_dge_edger(count_table, sample_table,
                      group_col     = "disease",
                      case_label    = "carcinoma",
                      control_label = "normal",
                      fdr_cutoff    = 0.05,
                      lfc_cutoff    = 1)
 
-  significant_genes <- statical_analysis[[2]]
+  significant_genes <- statistical_analysis[[2]]
   genes_names <- rownames(significant_genes)
 
   GO <- clusterProfiler::enrichGO(gene = genes_names,
@@ -33,8 +45,10 @@ GO_pathway <- function( gene_type = "SYMBOL"){
                             keyType = gene_type,
                             ont = "BP",
                             pvalueCutoff = 0.05)
-  head(GO@result[,c(2,3,6)])}
 
+  write.table(GO, file = "Result_GO_analysisi.csv", sep = "\t",row.names = FALSE)
+
+}
 
 
 
@@ -48,7 +62,16 @@ GO_pathway <- function( gene_type = "SYMBOL"){
 #' @examples KEGG_pathway(gene_type = "SYMBOL")
 #' @examples KEGG_pathway(gene_type = "ENTREZID")
 
-KEGG_pathway <- function(gene_type = "SYMBOL"){
+KEGG_pathway <- function(count_table, sample_table, gene_type = "SYMBOL"){
+
+  gene_filterd <-low_gene_filtering(cutoff = 1, count_table, sample_table)
+  count_table <- gene_filterd[[1]]
+  sample_table <- gene_filterd[[2]]
+
+  # basic argument check so the user knows what to pass
+  if (missing(count_table) || missing(sample_table)) {
+    stop("Please provide 'count_table' and 'sample_table' (e.g. from gene_table()).")
+  }
   statical_analysis <- run_dge_edger(count_table, sample_table,
                 group_col     = "disease",
                 case_label    = "carcinoma",
@@ -68,7 +91,10 @@ KEGG_pathway <- function(gene_type = "SYMBOL"){
   paste0("Number of genes in after removing elements with duplicated names and or NAs = ",
          length(genes_Entrez))
   KEGG <- clusterProfiler::enrichKEGG(gene = genes_Entrez,
-                                      organism = organism,
+                                      organism = "hsa",
                                       keyType = "ncbi-geneid",
                                       pvalueCutoff = 0.05)
-  head(KEGG@result[,c(2,3,6)])}
+
+  write.table(KEGG, file = "Result_KEGG_analysisi.csv", sep = "\t",row.names = FALSE)
+
+}

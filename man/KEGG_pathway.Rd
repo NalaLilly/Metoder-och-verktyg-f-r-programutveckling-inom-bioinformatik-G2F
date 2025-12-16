@@ -4,7 +4,7 @@
 \alias{KEGG_pathway}
 \title{KEGG pathway enrichment analysis}
 \usage{
-KEGG_pathway(gene_type = "SYMBOL")
+KEGG_pathway(count_table, sample_table, gene_type = "SYMBOL")
 }
 \arguments{
 \item{gene_type}{tells the function what kind Gene ID it is, take gene symbol or ENTREZ ID}
