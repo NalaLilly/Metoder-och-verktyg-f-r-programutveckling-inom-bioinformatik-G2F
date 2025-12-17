@@ -15,4 +15,9 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    edgeR
+    AnnotationDbi,
+    clusterProfiler,
+    edgeR,
+    ggplot2,
+    org.Hs.eg.db
+RoxygenNote: 7.3.3
